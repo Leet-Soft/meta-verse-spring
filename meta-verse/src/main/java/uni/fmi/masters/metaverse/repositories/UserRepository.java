@@ -8,6 +8,8 @@ import uni.fmi.masters.metaverse.entities.UserEntity;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer>{
 
-	UserEntity findUserByUsername(String username);
+	UserEntity findByUsername(String username);
+	
+	UserEntity findUserByUsernameAndPassword(String username, String password);
 
 }

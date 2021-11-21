@@ -1,11 +1,17 @@
 package uni.fmi.masters.metaverse.entities;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
-public class RoleEntity {
+@Entity
+@Table(name = "roles")
+public class RoleEntity implements Serializable{
 	
 	@Id
 	@Column(name="role_id")

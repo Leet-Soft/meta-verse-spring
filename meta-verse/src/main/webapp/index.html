@@ -51,7 +51,7 @@
                 </div>
             </div>
             <div class="col-md-5">
-                <form class="basic-panel" action="HelloWorldServlet" method="POST">
+                <form id="login-form" class="basic-panel" action="login" method="POST">
                     <div class="form-group">
                         <label for="username">Потребител</label>
                         <div class="input-group">
@@ -122,6 +122,29 @@
 
 <script>
     bindEvents();
+    
+    
+    $('#login-form').submit(function(e){
+    	e.preventDefault();
+    	
+    	$.ajax({
+    		url: "login",
+    		method: "POST",
+    		data: {
+    			username : $('#username').val(),
+    			password : $('#password').val()
+    		},
+    		success: function(data){
+    			window.location.replace(data);
+    		}, 
+    		fail : function(){
+    			alert("Request failed");
+    		}    		
+    	});    	
+    });
+    
+    
+    
 </script>
 </body>
 </html>

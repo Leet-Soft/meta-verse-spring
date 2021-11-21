@@ -1,5 +1,6 @@
 package uni.fmi.masters.metaverse.entities;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -15,9 +16,12 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "user")
-public class UserEntity {
+@JsonIgnoreProperties({"comments"})
+public class UserEntity implements Serializable{
 //			  CREATE TABLE USER(
 //			   ID IDENTITY PRIMARY KEY,
 //			   USERNAME VARCHAR(255) NOT NULL UNIQUE,
