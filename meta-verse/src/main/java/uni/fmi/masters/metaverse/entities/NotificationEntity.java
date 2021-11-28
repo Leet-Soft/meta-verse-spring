@@ -34,8 +34,14 @@ public class NotificationEntity implements Serializable{
 	@Column(name = "comment", length = 255)
 	private String comment;
 	
+	
+	//1.requested
+	//2.denied
+	//3.accepted
+	//4.removed
 	@Column(name = "status", length = 30)
 	private String status;
+	
 
 	public int getId() {
 		return id;
