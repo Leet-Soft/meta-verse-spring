@@ -15,6 +15,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "notifaction")
 public class NotificationEntity implements Serializable{
+	public static final String STATUS_REQUESTED = "requested";
+	public static final String STATUS_DENIED = "denied";
+	public static final String STATUS_ACCEPTED = "accepted";
+	public static final String STATUS_REMOVED = "removed";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

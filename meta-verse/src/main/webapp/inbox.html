@@ -99,9 +99,9 @@
                             <h3 class="panel-title">Известия</h3>
                         </div>
 
-                        <ul class="list-group" style="min-height:241px;">
+                        <ul class="list-group" style="min-height:241px;" id="notification-list">
 
-                            <li class="list-group-item">
+                            <li class="list-group-item" style="display:none" id="cloneMe">
                                 <div class="row">
                                     <div class="col-sm-2 col-xs-3">
                                         <img class="img-thumbnail" src="assets/img/user.jpg">                                    </div>
@@ -110,26 +110,12 @@
                                         <p>Иска да бъдете приятели</p>
                                     </div>
                                     <div class="col-sm-3 col-xs-12">
-                                        <button type="button" class="btn btn-danger pull-right remove-post"><span class="glyphicon glyphicon-remove"></span> Откажи</button>
-                                        <button type="button" class="btn btn-primary pull-right publish"><span class="glyphicon glyphicon-plus"></span> Приеми</button>
+                                        <button type="button" class="btn btn-danger pull-right remove-post cancel"><span class="glyphicon glyphicon-remove"></span> Откажи </button>
+                                        <button type="button" class="btn btn-success pull-right publish accept"><span class="glyphicon glyphicon-plus"></span> Приеми </button>
+                                        <button type="button" class="btn btn-primary pull-right publish remove"><span class="glyphicon glyphicon-remove"></span> Премахини </button>
                                     </div>
                                 </div>
-                            </li>
-
-                            <li class="list-group-item">
-                                <div class="row">
-                                    <div class="col-sm-2 col-xs-3">
-                                        <img class="img-thumbnail" src="assets/img/user.jpg">                                    </div>
-                                    <div class="col-sm-7 col-xs-9">
-                                        <h4>Иван</h4>
-                                        <p>Иска да бъдете приятели</p>
-                                    </div>
-                                    <div class="col-sm-3 col-xs-12">
-                                        <button type="button" class="btn btn-danger pull-right remove-post"><span class="glyphicon glyphicon-remove"></span> Откажи</button>
-                                        <button type="button" class="btn btn-primary pull-right publish"><span class="glyphicon glyphicon-plus"></span> Приеми</button>
-                                    </div>
-                                </div>
-                            </li>
+                            </li>                            
 
                         </ul>
                     </div>
@@ -142,7 +128,65 @@
 
 
 <script>
-    getCurrentTemp();
+
+	$(document).ready(function () {
+		
+		function getNotifications(){
+			$.ajax({
+				url : '/notification/all',
+				method: 'GET',
+				success : function(data){
+					data.forEach(function (notification){
+						showNotification(notification.fromUser.username, 
+								notification.comment, notification.id, notification.status);
+					});			
+				}
+				
+			});
+		}
+		
+		function showNotification(name, comment, id, status){
+			cloning = $('#cloneMe').clone();
+			
+			if(status == 'denied'){
+				cloning.css({"background-color" : "red" });
+			}else if(status == 'accepted'){
+				cloning.css({"background-color" : "green" });
+			}else if(status == 'requested'){
+				cloning.css({"background-color" : "yellow" });
+			}
+			
+			cloning.attr('id', '');
+			
+			cloning.find('h4').text(name);
+			cloning.find('p').text(comment);
+			
+			cloning.find('button.cancel').click(function() {changeNotification("denied", id) });
+			cloning.find('button.accept').click(function() {changeNotification("accepted", id)});
+			cloning.find('button.remove').click(function() {changeNotification("removed", id)});
+			
+			cloning.show();
+			
+			$('#notification-list').append(cloning);
+		}
+	
+		function changeNotification(status, id){
+			$.ajax({
+				url: '/notification/change',
+				method: 'POST',
+				data: {
+					notificationId: id,
+					status: status
+				},
+				success: function(data){
+					alert("completed!");
+				}			
+			});
+		}
+		
+		getNotifications();
+	});
+  
 </script>
 </body>
 </html>

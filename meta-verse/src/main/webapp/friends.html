@@ -150,6 +150,42 @@
                         <th class="remove-col"><span class="hidden-xs">Премахни</span></th>
                         </thead>
                         <tbody>
+                                              
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    
+    
+    <div style="display:none">
+    <table>
+    <tr id="search-tr" style="display:none">
+                            <td class="friend-img">
+                                <img class="img-thumbnail" src="assets/img/user.jpg">
+                            </td>
+                            <td>
+                                <span class="friend-name">
+                                    Иван
+                                </span>
+                            </td>
+                            <td class="hidden-xs">
+                                <span class="friend-email">ivan@abv.bg</span>
+                            </td>
+                              <td class="hidden-xs">
+                                <input type="text" class="comment-field"  />
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-success pull-right remove-friend">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                    <span class="hidden-xs"> Добави </span>
+                                </button>
+                            </td>
+                        </tr>  
+                        
                         <tr id="friend-tr" style="display:none">
                             <td class="friend-img">
                                 <img class="img-thumbnail" src="assets/img/user.jpg">
@@ -168,40 +204,9 @@
                                     <span class="hidden-xs"> Премахни</span>
                                 </button>
                             </td>
-                        </tr>                        
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-        </div>
-
-    </div>
-    
-    
-    <div style="display:none">
-    <tr id="search-tr" style="display:none">
-                            <td class="friend-img">
-                                <img class="img-thumbnail" src="assets/img/user.jpg">
-                            </td>
-                            <td>
-                                <span class="friend-name">
-                                    Иван
-                                </span>
-                            </td>
-                            <td class="hidden-xs">
-                                <span class="friend-email">ivan@abv.bg</span>
-                            </td>
-                              <td class="hidden-xs">
-                                <input type="text" id="comment-field"  />
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-success pull-right remove-friend">
-                                    <span class="glyphicon glyphicon-remove"></span>
-                                    <span class="hidden-xs"> Добави </span>
-                                </button>
-                            </td>
                         </tr>  
+                        
+                      </table>
 </div>
 </div>
 
@@ -238,26 +243,33 @@
 	}
 	
 	function postSearchResult(username, email, userId){
-		var trSearchResult = $('#search-tr').clone();
-		
-		
-		
+		var trSearchResult = $('#search-tr').clone();	
+				
 		trSearchResult.attr('id', '');
 		
 		trSearchResult.find('.friend-name').text(username);
-		trSearchResult.find('.friend-email').text(email);
+		trSearchResult.find('.friend-email').text(email);			
 		trSearchResult.find('button').click(function(){
-			///TODO: Complete it			
+			sendFriendRequest(userId, trSearchResult.find('.comment-field'));	
+			trSearchResult.hide();
 		});
-		
-		
-		
-	
+				
 		trSearchResult.appendTo('#search-body');
-		//$().append();
-		
-		//alert();
-		trSearchResult.show();
+		trSearchResult.show();		
+	}
+	
+	function sendFriendRequest(userId, commentField){
+		$.ajax({
+			
+			url: "/notification/add",
+			method: "POST",
+			data: {
+				comment : commentField.val(),
+				userId : userId
+			}, success : function(data){
+				alert("Friend Request send successfully");					
+			}			
+		});
 		
 	}
 	
