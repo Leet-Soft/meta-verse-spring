@@ -75,7 +75,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="index.html">
+                                    <a href="index.html" id="logout">
                                         <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
                                         <span class="nav-label">Изход</span>
                                     </a>
@@ -188,6 +188,7 @@
         
         var apiKey = "4ddc620cf659bfe28db6d4012c9fc208";
         var city = "Plovdiv";
+        var me;
 
 
         function doApiRequest(city, type){
@@ -261,7 +262,7 @@
         	});   
         }
 
-        function postComment(comment, city, temp, icon, commentId){
+        function postComment(comment, city, temp, icon, commentId, userId){
                 var miniMe = $('#cloneMe').clone();
 
                 miniMe.find('h4').text(city);
@@ -269,10 +270,14 @@
                 miniMe.attr('id', '');
                 miniMe.find('.current-temp').text(temp);                
                           
-                miniMe.find('button').click(function(){
-                    deleteComment(miniMe, commentId);
-                });
-
+                if(me == userId){
+               	   miniMe.find('button').click(function(){
+                          deleteComment(miniMe, commentId);
+                      });
+                }else{
+                	miniMe.find('button').hide();
+                }
+             
                 iconToChange = miniMe.find('img');
 
                 setWeatherIcon(icon, iconToChange);
@@ -333,7 +338,7 @@
         		method: "GET",
         		success: function(data){
         			data.forEach( function (comment){
-        				postComment(comment.comment, comment.city, comment.temp, comment.icon, comment.id);
+        				postComment(comment.comment, comment.city, comment.temp, comment.icon, comment.id, comment.user.id);
         			});        			
         		},
         		fail: function(){
@@ -374,8 +379,46 @@
        			}
         	});
         }
+        
+        function getLoggedUser(){
+        	$.ajax({
+        		url: "/loggedUserId",
+        		method : "GET",
+        		complete : function(data){
+        			switch(data.status){
+        			case 200:
+        				me = data.responseJSON;
+        				break;
+        				
+        			case 401:
+        				window.location.href = "index.html";
+        				break;
+        			}
+        		}, fail : function(){
+        			window.location.href = "home.html";
+        		}
+        	});
+        }
+        
+        $('#logout').on('click', function(){
+        	
+        	$.ajax({
+        		url: "logout",
+        		method: "POST",
+        		complete: function(data){
+        			if(data.status == 418){
+        				alert("Why are you a teapot?");
+        			}
+        			
+        			window.location.href = "index.html";
+        		}        		
+        	});
+        	
+        });       
+        
 
-        doApiRequest("plovdiv","main");        
+        doApiRequest("plovdiv","main");   
+        getLoggedUser();
         getAllComments();
     });
 

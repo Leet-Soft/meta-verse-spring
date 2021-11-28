@@ -5,11 +5,14 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -76,6 +79,33 @@ public class LoginController {
 			}
 		}				
 		return "error.html";		
+	}
+	
+	@GetMapping(path = "/loggedUserId")
+	public ResponseEntity<Integer> loggedUserId(HttpSession session){
+		
+		UserEntity user = (UserEntity) session.getAttribute("user");
+		
+		if(user != null) {
+			return new ResponseEntity<Integer>(user.getId(), HttpStatus.OK);
+		}else {
+			return new ResponseEntity<Integer>(-1, HttpStatus.UNAUTHORIZED);
+		}		
+		
+	}
+	
+	@PostMapping(path = "/logout")
+	public ResponseEntity<Boolean> logout(HttpSession session){
+		
+		UserEntity user = (UserEntity) session.getAttribute("user");
+		
+		if(user != null) {
+			session.invalidate();
+			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		}else {
+			return new ResponseEntity<Boolean>(false, HttpStatus.I_AM_A_TEAPOT);
+		}
+		
 	}
 	
 
