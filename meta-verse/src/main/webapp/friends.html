@@ -115,6 +115,30 @@
 
                 <div class="panel panel-default">
                     <div class="panel-heading">
+                        <h3 class="panel-title">Резултати</h3>
+                    </div>
+
+                    <table class="table table-striped table-bordered friends-table">
+                        <thead>
+                        <th>Снимка</th>
+                        <th>Име</th>
+                        <th class="hidden-xs">Email</th>
+                        <th class="hidden-xs">Коментар</th>
+                        <th class="remove-col"><span class="hidden-xs">Премахни</span></th>
+                        </thead>
+                        <tbody id="search-body">
+                                              
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            
+            <div class="col-sm-4"></div>
+            <div class="col-sm-8">
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
                         <h3 class="panel-title">Списък с приятели</h3>
                     </div>
 
@@ -126,7 +150,7 @@
                         <th class="remove-col"><span class="hidden-xs">Премахни</span></th>
                         </thead>
                         <tbody>
-                        <tr>
+                        <tr id="friend-tr" style="display:none">
                             <td class="friend-img">
                                 <img class="img-thumbnail" src="assets/img/user.jpg">
                             </td>
@@ -144,26 +168,7 @@
                                     <span class="hidden-xs"> Премахни</span>
                                 </button>
                             </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <img class="img-thumbnail" src="assets/img/user.jpg">
-                            </td>
-                            <td>
-                                        <span class="friend-name">
-                                            Марчето
-                                        </span>
-                            </td>
-                            <td class="hidden-xs">
-                                <span class="friend-email">marcheto@mail.bg</span>
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-danger pull-right remove-friend">
-                                    <span class="glyphicon glyphicon-remove"></span>
-                                    <span class="hidden-xs"> Премахни</span>
-                                </button>
-                            </td>
-                        </tr>
+                        </tr>                        
                         </tbody>
                     </table>
                 </div>
@@ -172,14 +177,92 @@
         </div>
 
     </div>
-
+    
+    
+    <div style="display:none">
+    <tr id="search-tr" style="display:none">
+                            <td class="friend-img">
+                                <img class="img-thumbnail" src="assets/img/user.jpg">
+                            </td>
+                            <td>
+                                <span class="friend-name">
+                                    Иван
+                                </span>
+                            </td>
+                            <td class="hidden-xs">
+                                <span class="friend-email">ivan@abv.bg</span>
+                            </td>
+                              <td class="hidden-xs">
+                                <input type="text" id="comment-field"  />
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-success pull-right remove-friend">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                    <span class="hidden-xs"> Добави </span>
+                                </button>
+                            </td>
+                        </tr>  
+</div>
 </div>
 
 
+
 <script>
+	var timeout;
+	
+	$('#search-friend').keyup(function(){
+		
+		clearTimeout(timeout);
+		
+		timeout = setTimeout(function () {
+	      	search();
+		}, 1000);
+	});
+	
+	function search(){    	
+		$.ajax({
+			url: "/notification/search",
+			data: {
+				filter : $('#search-friend').val()
+			},
+			method: "GET",
+			success : function( data ){
+					$('#search-body').empty();
+					
+					data.forEach( function(user){						
+						postSearchResult(user.username, user.email, user.id);
+					});
+				
+				}		
+			});
+	}
+	
+	function postSearchResult(username, email, userId){
+		var trSearchResult = $('#search-tr').clone();
+		
+		
+		
+		trSearchResult.attr('id', '');
+		
+		trSearchResult.find('.friend-name').text(username);
+		trSearchResult.find('.friend-email').text(email);
+		trSearchResult.find('button').click(function(){
+			///TODO: Complete it			
+		});
+		
+		
+		
+	
+		trSearchResult.appendTo('#search-body');
+		//$().append();
+		
+		//alert();
+		trSearchResult.show();
+		
+	}
+	
+
     getCurrentTemp();
-    initSearch();
-    hideSearchWhenClickingOutside();
 </script>
 </body>
 </html>
